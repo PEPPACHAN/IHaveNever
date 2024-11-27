@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct FirstFeaturesPageView: View {
+    @AppStorage("wasShown") var wasShown: Bool = false
+    @Binding var showing: Bool
     
     @State private var currentPage = 0
     private let colors = [
@@ -23,13 +25,20 @@ struct FirstFeaturesPageView: View {
                 ForEach(0..<4) { index in
                     Rectangle()
                         .foregroundStyle(index == currentPage ? .white : .gray.opacity(0.5))
-                        .frame(height: 4)
+                        .frame(width: 60, height: 4)
                         .clipShape(.capsule)
                         .animation(.easeInOut, value: currentPage)
                 }
-                Text(currentPage == 3 ? "X": "")
+                Image(systemName: "xmark")
                     .foregroundStyle(Color.gray.opacity(0.5))
-                    .offset(x: 30)
+                    .offset(x: 20)
+                    .opacity(currentPage == 3 ? 1: 0)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.5)){
+                            showing.toggle()
+                            wasShown.toggle()
+                        }
+                    }
             }
             .padding(.horizontal, 50)
             .padding(.top, 40)
@@ -59,13 +68,24 @@ struct FirstFeaturesPageView: View {
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 100))
             }
-            .offset(y: -18)
+            .offset(y: -28)
+            HStack {
+                Text("Terms of Use")
+                Spacer()
+                Text("Restore")
+                Spacer()
+                Text("Privacy Policy")
+            }
+            .disabled(currentPage != 3)
+            .foregroundStyle(currentPage == 3 ? Color.gray.opacity(0.4): Color.clear)
+            .font(.system(size: 14))
+            .padding(.horizontal, 50)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(colors[currentPage].ignoresSafeArea())
     }
 }
-
-#Preview {
-    FirstFeaturesPageView()
-}
+//
+//#Preview {
+//    FirstFeaturesPageView()
+//}

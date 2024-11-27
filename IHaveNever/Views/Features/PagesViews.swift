@@ -32,7 +32,7 @@ struct FirstPageView: View {
                     .font(.system(size: 20.5))
                     .foregroundStyle(Color.white)
             }
-            .offset(y: 250)
+            .offset(y: 210)
         }
     }
 } //  rgba(78, 28, 220, 1)
@@ -59,7 +59,7 @@ struct SecondPageView: View {  //  rgba(155, 20, 148, 1) -> rgba(190, 18, 101, 1
                     .font(.system(size: 20.5))
                     .foregroundStyle(Color.white)
             }
-            .offset(y: 250)
+            .offset(y: 210)
         }
     }
 }
@@ -227,5 +227,5 @@ struct FourthPageView: View {
 }
 
 #Preview {
-    FourthPageView()
+    FirstPageView()
 }
