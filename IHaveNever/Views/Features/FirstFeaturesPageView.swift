@@ -9,7 +9,6 @@ import SwiftUI
 
 struct FirstFeaturesPageView: View {
     @AppStorage("wasShown") var wasShown: Bool = false
-    @Binding var showing: Bool
     
     @State private var currentPage = 0
     private let colors = [
@@ -35,7 +34,6 @@ struct FirstFeaturesPageView: View {
                     .opacity(currentPage == 3 ? 1: 0)
                     .onTapGesture {
                         withAnimation(.easeInOut(duration: 0.5)){
-                            showing.toggle()
                             wasShown.toggle()
                         }
                     }

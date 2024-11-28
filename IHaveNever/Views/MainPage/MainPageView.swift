@@ -53,7 +53,7 @@ struct MainPageView: View {
                                     .foregroundStyle(!selectedTab ? Color.white : Color.init(red: 42/255, green: 15/255, blue: 118/255))
                                     .onTapGesture {
                                         withAnimation(.easeInOut(duration: 0.2)) {
-                                            selectedTab.toggle()
+                                            selectedTab = false
                                         }
                                     }
                                 Spacer()
@@ -63,16 +63,20 @@ struct MainPageView: View {
                                     .padding(.trailing, 22)
                                     .onTapGesture {
                                         withAnimation(.easeInOut(duration: 0.2)) {
-                                            selectedTab.toggle()
+                                            selectedTab = true
                                         }
                                     }
                             }
                             .padding(.horizontal, 30)
                         }
                     }
-                
-                MainPageGMView()
-                    .clipShape(RoundedRectangle(cornerRadius: 38))
+                if !selectedTab {
+                    MainPageGMView()
+                        .clipShape(RoundedRectangle(cornerRadius: 38))
+                } else {
+                    AIModeView()
+                        .clipShape(RoundedRectangle(cornerRadius: 38))
+                }
             }
             .ignoresSafeArea()
             .padding(.top, 1)
@@ -85,7 +89,7 @@ struct MainPageView: View {
             )
             
             if !wasShown {
-                FirstFeaturesPageView(showing: $showing)
+                FirstFeaturesPageView()
                     .transition(.opacity)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -101,9 +105,12 @@ struct MainPageView: View {
                     }
                 }
             BurgerView()
-                .frame(maxWidth: 299.62, maxHeight: .infinity)
+                .frame(maxWidth: 315, maxHeight: .infinity)
                 .background(Color.white)
                 .offset(x: burgerShowing ? 50 : 360)
+        }
+        .onAppear{
+            APIService.shared.fecthAll(lang: "ru")
         }
     }
 }
