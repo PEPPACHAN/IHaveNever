@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct MainPageGMView: View {
-    private let arr = [["handKeeper", "name1", "cardCount 220"], ["handKeeper", "name2", "cardCount 888"], ["handKeeper", "name3", "cardCount 290"], ["handKeeper", "name4", "cardCount 200"]]
     @StateObject private var apiData = APIService.shared
+    @StateObject private var gameInfo = GameInfo.shared
+    @Binding var selectedInfo: Int?
+    @AppStorage("language") private var language = ""
     
     var body: some View {
         ScrollView{
@@ -26,7 +28,7 @@ struct MainPageGMView: View {
                                 .foregroundStyle(Color.white)
                                 .font(.system(size: 19.57, weight: .bold))
                             
-                            Text(String(describing: item.appTotalCardsValue) + " cards")
+                            Text(String(describing: item.appTotalCardsValue) + "cards".localizedPlural(item.appTotalCardsValue, lang: language))
                                 .font(.system(size: 14.87))
                                 .foregroundStyle(Color.white.opacity(0.37))
                             
@@ -43,25 +45,34 @@ struct MainPageGMView: View {
                             //                            }
                         }
                         Spacer()
-                        Circle()
-                            .frame(width: 28.37)
-                            .foregroundStyle(Color.white.opacity(0.12))
-                            .overlay {
-                                Text("i")
-                                    .foregroundStyle(Color.white.opacity(0.36))
-                                    .font(.system(size: 16.62, weight: .heavy))
+                        Button(action:{
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedInfo = index
+                                if !gameInfo.selectedIndex.contains(where: { $0 == index }) {
+                                    gameInfo.selectedIndex.append(index)
+                                    gameInfo.addData(item.appCategoryCardsValue, name: item.appCategoryTitleValue, nameEn: item.appCategoryTitleEnValue)
+                                }
                             }
-                        Image(systemName: "checkmark.circle.fill")//: "circle.fill")
+                        }){
+                            Circle()
+                                .frame(width: 28.37)
+                                .foregroundStyle(Color.white.opacity(0.12))
+                                .overlay {
+                                    Text("i")
+                                        .foregroundStyle(Color.white.opacity(0.36))
+                                        .font(.system(size: 16.62, weight: .heavy))
+                                }
+                        }
+                        
+                        Image(systemName: gameInfo.selectedIndex.contains(where: { $0 == index }) ? "checkmark.circle.fill" : "circle.fill")
                             .font(.system(size: 28.37))
-                            .foregroundStyle(
-                                Color.white,
-                                LinearGradient(colors: [
-                                    Color.init(red: 23/255, green: 168/255, blue: 143/255),
-                                    Color.init(red: 11/255, green: 140/255, blue: 117/255)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            .foregroundStyle( !gameInfo.selectedIndex.contains(where: { $0 == index }) ?
+                                              Color.white.opacity(0.12) :
+                                                Color.white,
+                                              LinearGradient(colors: [
+                                                Color.init(red: 23/255, green: 168/255, blue: 143/255),
+                                                Color.init(red: 11/255, green: 140/255, blue: 117/255)], startPoint: .topLeading, endPoint: .bottomTrailing)
                             )
-                            .onTapGesture {
-                                
-                            }
                             .padding(.horizontal)
                     }
                     .frame(maxWidth: .infinity, maxHeight: 95.93, alignment: .leading)
@@ -72,10 +83,21 @@ struct MainPageGMView: View {
                     )
                     .clipShape(
                         RoundedRectangle(cornerRadius: 27)
-                    )
+                    ).onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.05)){
+                            if gameInfo.selectedIndex.contains(where: { $0 == index }) {
+                                gameInfo.selectedIndex.removeAll(where: { $0 == index })
+                                gameInfo.removeData(item.appCategoryCardsValue, name: item.appCategoryTitleValue, nameEn: item.appCategoryTitleEnValue)
+                            } else {
+                                gameInfo.selectedIndex.append(index)
+                                gameInfo.addData(item.appCategoryCardsValue, name: item.appCategoryTitleValue, nameEn: item.appCategoryTitleEnValue)
+                            }
+                        }
+                    }
                 }
             }
         }
+        .scrollIndicators(.hidden)
         .padding()
         .padding(.bottom)
         .frame(maxWidth: .infinity, maxHeight: .infinity)

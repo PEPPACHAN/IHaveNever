@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings
+  IHaveNever
+
+  Created by PEPPA CHAN on 29.11.2024.
+  
+*/
+
+"gameModes" = "Spielmodi";
+"aiMode" = "AI Modus";
+"understood" = "Verstanden";
+"modeName" = "Name des Modus";
+"selectMode" = "Modus auswählen";
+"numberOfCards" = "Anzahl der karten";
+"briefTagsForTheGist" = "Kurze tags für das wesentliche";
+"generate" = "Erzeugen Sie";
+"restorePurchases" = "Käufe wiederherstellen";
+"privacyPolicy" = "Datenschutzbestimmungen";
+"contactUs" = "Kontakt";
+"language" = "Sprache";
+"premiumActivated" = "Premium aktiviert";
+"IHN" = "Ich habe nie";
+"play" = "Jetzt spielen";
+"exit" = "Sind Sie sicher, dass Sie ausgehen wollen? Ihr Fortschritt wird nicht gespeichert";
+"exitToMenu" = "Zum Menü zurückkehren";
+"repeat" = "Spiel wiederholen";

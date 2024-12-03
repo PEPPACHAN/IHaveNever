@@ -12,13 +12,15 @@ struct AIModeView: View {
     @State private var selectedMode = ""
     @StateObject private var mode = APIService.shared
     @State private var isSelection: Bool = false
+    @State private var isLoading: Bool = false
     @State private var numberOfCards: String = ""
-    @State private var tags: String = "Brief tags for the gist"
+    @State private var tags: String = ""
+    @AppStorage("language") private var language = ""
     
     var body: some View {
         Group {
             VStack{
-                Text("AI Mode")
+                Text("aiMode".changeLocale(lang: language))
                     .foregroundStyle(
                         LinearGradient(colors: [
                             Color.init(red: 42/255, green: 15/255, blue: 118/255),
@@ -28,50 +30,90 @@ struct AIModeView: View {
                     .font(.system(size: 18.43, weight: .heavy))
                     .padding()
                 
-                TextField("Mode name", text: $modeName)
-                    .padding()
-                    .foregroundStyle(.black.opacity(0.3))
-                    .background(Color.init(.tertiarySystemFill))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .padding(.horizontal)
-                
-                Button(action:{
+                if !isLoading {
+                    TextField("modeName".changeLocale(lang: language), text: $modeName)
+                        .padding()
+                        .background(Color.init(.tertiarySystemFill))
+                        .foregroundStyle(Color.black)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(.horizontal)
+                        .submitLabel(.done)
                     
-                }){
-                    HStack{
-                        Text(selectedMode != "" ? selectedMode: mode.modes.first ?? "nil")
-                        Spacer()
-                        Image(systemName: isSelection ? "chevron.down": "chevron.right")
+                    Button(action:{
+                        if !mode.modes.isEmpty {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                self.isSelection.toggle()
+                            }
+                        }
+                    }){
+                        HStack{
+                            if !mode.modes.isEmpty {
+                                Text(selectedMode == "" ? "selectMode".changeLocale(lang: language): selectedMode)
+                                    .foregroundStyle(
+                                        LinearGradient(colors: [
+                                            Color.init(red: 42/255, green: 15/255, blue: 118/255),
+                                            Color.init(red: 78/255, green: 28/255, blue: 220/255)
+                                        ], startPoint: .top, endPoint: .bottom)
+                                    )
+                            } else {
+                                LoadingView(color: Color.init(red: 42/255, green: 15/255, blue: 118/255), size: 30)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(Color.init(red: 197/255, green: 197/255, blue: 197/255))
+                                .rotationEffect(.degrees(isSelection ? 90 : 0))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .padding(.horizontal)
+                        .background(Color.init(.tertiarySystemFill))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(.horizontal)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .padding(.horizontal)
-                    .background(Color.init(.tertiarySystemFill))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .padding(.horizontal)
-                }
-                
-                TextField("Number of cards", text: $numberOfCards)
-                    .keyboardType(.numberPad)
-                    .foregroundStyle(.black.opacity(0.3))
-                    .padding()
-                    .background(Color.init(.tertiarySystemFill))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .padding(.horizontal)
-                
-                TextEditor(text: $tags)
-                    .scrollContentBackground(.hidden)
-                    .foregroundStyle(.black.opacity(0.3))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.init(.tertiarySystemFill))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .padding(.horizontal)
-                
-                Button(action:{
                     
+                    if isSelection {
+                        modeSelection()
+                            .background(Color.init(.tertiarySystemFill))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                    }
+                    
+                    if !isSelection {
+                        TextField("numberOfCards".changeLocale(lang: language), text: $numberOfCards)
+                            .keyboardType(.numberPad)
+                            .foregroundStyle(.black)
+                            .padding()
+                            .background(Color.init(.tertiarySystemFill))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .padding(.horizontal)
+                            .submitLabel(.done)
+                        
+                        ZStack(alignment: .topLeading){
+                            if tags.isEmpty{
+                                Text("briefTagsForTheGist".changeLocale(lang: language))
+                                    .foregroundStyle(.black.opacity(0.3))
+                                    .padding(.top, 26)
+                                    .padding(.horizontal, 35)
+                            }
+                            TextEditor(text: $tags)
+                                .scrollContentBackground(.hidden)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.init(.tertiarySystemFill))
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .padding(.horizontal)
+                        }
+                    }
+                }
+                Button(action:{
+                    if (modeName != "" && selectedMode != "" && numberOfCards != "" && tags != ""){
+                        withAnimation(.easeInOut(duration: 0.3)){
+                            self.isLoading.toggle()
+                        }
+                    }
                 }){
-                    Text("Generate")
+                    Text("generate".changeLocale(lang: language))
                         .foregroundStyle(.white)
                         .font(.system(size: 16.33, weight: .bold))
                         .frame(maxWidth: .infinity, maxHeight: 65.13)
@@ -84,6 +126,30 @@ struct AIModeView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)
+        .colorScheme(.light)
+    }
+}
+
+extension AIModeView {
+    func modeSelection() -> some View {
+        ScrollView{
+            VStack(alignment: .leading){
+                ForEach(mode.modes, id: \.self){ item in
+                    Text(item)
+                        .padding()
+                        .padding(.horizontal)
+                        .foregroundStyle(.black)
+                        .onTapGesture {
+                            self.selectedMode = item
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                self.isSelection.toggle()
+                            }
+                        }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(height: isSelection ? .infinity: 0)
     }
 }
 
