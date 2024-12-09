@@ -23,4 +23,9 @@ extension String {
         
         return NSLocalizedString(self, tableName: nil, bundle: bundle!, value: "", comment: "")
     }
+    
+    func capitalizeFirstLetter() -> String {
+        guard let first = self.first else { return self }
+        return first.uppercased() + self.dropFirst().lowercased()
+    }
 }

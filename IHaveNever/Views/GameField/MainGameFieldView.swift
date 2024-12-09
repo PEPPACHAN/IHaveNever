@@ -104,7 +104,11 @@ struct MainGameFieldView: View {
                                 .frame(width: 337, height: 447)
                                 .overlay {
                                     VStack(spacing: 71.21) {
-                                        Text(gameInfo.gameData[index].appCardTextValue)
+                                        Text(gameInfo.gameData[index].appCardTextValue.capitalizeFirstLetter())
+                                            .font(.custom("inter", size: 24.66))
+                                            .fontWeight(.bold)
+                                            .frame(maxHeight: 150)
+                                            .minimumScaleFactor(0.3)
                                             .padding(.horizontal)
                                             .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * -20)
                                             .scaleEffect(1 - CGFloat(index - currentPage) * 0.05)
@@ -165,7 +169,7 @@ struct MainGameFieldView: View {
                 }else{
                     VStack(spacing: 25){
                         Button(action: {
-                            exit()
+                            gameInfo.isGameStarted = false
                         }) {
                             Text("exitToMenu".changeLocale(lang: language))
                                 .font(.custom("inter", size: 16))
@@ -202,6 +206,12 @@ struct MainGameFieldView: View {
                 Color.init(red: 78/255, green: 28/255, blue: 220/255)
             ], startPoint: .top, endPoint: .bottom))
         .tabViewStyle(.page(indexDisplayMode: .never))
+        .onDisappear{
+            gameInfo.selectedIndex.removeAll()
+            gameInfo.categoryName.removeAll()
+            gameInfo.categoryNameEn.removeAll()
+            gameInfo.gameData.removeAll()
+        }
         
         if showRating {
             requestRating()
@@ -246,16 +256,6 @@ extension MainGameFieldView {
         }
     }
     
-    func exit() {
-        gameInfo.isGameStarted.toggle()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01){
-            gameInfo.selectedIndex.removeAll()
-            gameInfo.categoryName.removeAll()
-            gameInfo.categoryNameEn.removeAll()
-            gameInfo.gameData.removeAll()
-        }
-    }
-    
     func askView() -> some View {
         Group{
             RoundedRectangle(cornerRadius: 23)
@@ -290,7 +290,7 @@ extension MainGameFieldView {
                         .onTapGesture {
                             if !isFirstGame{
                                 isExitButtonPressed.toggle()
-                                exit()
+                                gameInfo.isGameStarted = false
                             } else {
                                 showRating = true
                                 isExitButtonPressed.toggle()
@@ -311,7 +311,7 @@ extension MainGameFieldView {
                 .onTapGesture {
                     isFirstGame = false
                     showRating = false
-                    exit()
+                    gameInfo.isGameStarted = false
                 }
             RequestReviewView(showRating: $showRating, isExitButtonPressed: $isExitButtonPressed)
         }
