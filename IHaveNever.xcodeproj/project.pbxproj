@@ -10,9 +10,22 @@
 		FC1839272CF5B844009B0CFF /* IHaveNever.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IHaveNever.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		FC8D2A1F2D01CDAB0010C104 /* Exceptions for "IHaveNever" folder in "IHaveNever" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = FC1839262CF5B844009B0CFF /* IHaveNever */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		FC1839292CF5B844009B0CFF /* IHaveNever */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				FC8D2A1F2D01CDAB0010C104 /* Exceptions for "IHaveNever" folder in "IHaveNever" target */,
+			);
 			path = IHaveNever;
 			sourceTree = "<group>";
 		};
@@ -259,6 +272,7 @@
 				DEVELOPMENT_TEAM = BQ85TLYX66;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IHaveNever/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "I have never";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -294,6 +308,7 @@
 				DEVELOPMENT_TEAM = BQ85TLYX66;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IHaveNever/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "I have never";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

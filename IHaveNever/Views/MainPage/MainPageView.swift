@@ -13,6 +13,7 @@ struct MainPageView: View {
     
     @StateObject private var apiData = APIService.shared
     @StateObject private var gameInfo = GameInfo.shared
+    @StateObject private var products = PurchaseManager.shared
     @State private var burgerShowing: Bool = false
     @State private var selectedTab: Bool = false
     @State private var selectedInfo: Int?
@@ -23,8 +24,8 @@ struct MainPageView: View {
             VStack{
                 HStack{
                     Text("App Title")
-                        .font(.title)
-                        .bold()
+                        .font(.custom("inter", size: 20))
+                        .fontWeight(.bold)
                     Spacer()
                     VStack(spacing: 2){
                         ForEach(0..<2){ _ in
@@ -54,6 +55,8 @@ struct MainPageView: View {
                                 .offset(x: selectedTab ? 82.26: -82.26) // +-
                             HStack{
                                 Text("gameModes".changeLocale(lang: language))
+                                    .font(.custom("inter", size: 16))
+                                    .fontWeight(.medium)
                                     .frame(width: 105)
                                     .multilineTextAlignment(.center)
                                     .padding(.bottom)
@@ -65,6 +68,8 @@ struct MainPageView: View {
                                     }
                                 Spacer()
                                 Text("aiMode".changeLocale(lang: language))
+                                    .font(.custom("inter", size: 16))
+                                    .fontWeight(.medium)
                                     .frame(width: 64)
                                     .multilineTextAlignment(.center)
                                     .foregroundStyle(selectedTab ? Color.white : Color.init(red: 42/255, green: 15/255, blue: 118/255))
@@ -116,9 +121,11 @@ struct MainPageView: View {
                             VStack{
                                 Text("play".changeLocale(lang: language))
                                     .foregroundStyle(Color.white)
-                                    .font(.system(size: 17.48, weight: .heavy))
+                                    .font(.custom("inter", size: 17.48))
+                                    .fontWeight(.bold)
                                 Text(String(describing: gameInfo.selectedIndex.count) + "board".localizedPlural(gameInfo.selectedIndex.count, lang: language) + String(describing: gameInfo.gameData.count) + "cards".localizedPlural(gameInfo.gameData.count, lang: language))
-                                    .font(.system(size: 14.87))
+                                    .font(.custom("inter", size: 14.87))
+                                    .fontWeight(.medium)
                                     .foregroundStyle(Color.white.opacity(0.37))
                             }
                         }
@@ -128,6 +135,14 @@ struct MainPageView: View {
             
             if gameInfo.isGameStarted {
                 MainGameFieldView()
+            }
+            
+            if products.isPurchasedShow {
+                FourthPageView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(
+                        LinearGradient(colors: [Color.init(red: 42/255, green: 15/255, blue: 118/255), Color.init(red: 78/255, green: 28/255, blue: 220/255), Color.init(red: 42/255, green: 15/255, blue: 118/255)], startPoint: .top, endPoint: .bottom)
+                    )
             }
             
             if !wasShown {
@@ -152,19 +167,19 @@ struct MainPageView: View {
             }
              
             Rectangle()
-                .frame(maxWidth: 299.62, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .foregroundStyle(Color.black.opacity(0.4))
                 .ignoresSafeArea()
-                .offset(x: burgerShowing ? -100: 400)
+                .offset(x: burgerShowing ? -100: 600)
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         burgerShowing.toggle()
                     }
                 }
             BurgerView(burgerShowing: $burgerShowing)
-                .frame(maxWidth: 315, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.white)
-                .offset(x: burgerShowing ? 50 : 400)
+                .offset(x: burgerShowing ? 50 : 700)
         }
         .onAppear{
             if language == "" {
@@ -192,7 +207,7 @@ extension MainPageView {
                 
                 Spacer()
                 
-                Image("handKeeperRed")
+                Image(apiData.fetchData?.appDataValue[index].appCategoryTitleEnValue ?? "")
                     .resizable()
                     .frame(width: 141.36, height: 134.43)
                     .aspectRatio(contentMode: .fill)
@@ -212,12 +227,14 @@ extension MainPageView {
                             .foregroundStyle(.white)
                     }
                     .onTapGesture {
+                        selectedInfo = nil
                         gameInfo.isGameStarted.toggle()
                     }
             }
             
             Text(apiData.fetchData?.appDataValue[index].appCategoryInfoValue ?? "")
-                .font(.system(size: 20))
+                .font(.custom("inter", size: 20))
+                .fontWeight(.medium)
                 .foregroundStyle(.black)
             
             Button(action:{
@@ -226,7 +243,8 @@ extension MainPageView {
             }){
                 Text("understood".changeLocale(lang: language))
                     .foregroundStyle(.white)
-                    .font(.system(size: 16.33, weight: .bold))
+                    .font(.custom("inter", size: 16.33))
+                    .fontWeight(.bold)
                     .frame(maxWidth: .infinity, maxHeight: 65.13)
                     .background(Color.init(red: 56/255, green: 25/255, blue: 145/255))
                     .clipShape(RoundedRectangle(cornerRadius: 23))

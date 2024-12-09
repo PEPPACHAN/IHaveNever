@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct FirstPageView: View {
+    @AppStorage("language") private var language = ""
     var body: some View {
         ZStack{
             VStack{
@@ -22,41 +24,14 @@ struct FirstPageView: View {
                     .frame(width: 1000, height: 700)
             })
             VStack(spacing: 20){
-                Text("1M+ Questions in\none app")
+                Text("1MQuestions".changeLocale(lang: language))
                     .multilineTextAlignment(.center)
-                    .font(.system(size: 27))
-                    .bold()
+                    .font(.custom("inter", size: 26.94))
+                    .fontWeight(.bold)
                     .foregroundStyle(Color.white)
-                Text("Have fun, wait for the\nboards to update")
+                Text("haveFun".changeLocale(lang: language))
                     .multilineTextAlignment(.center)
-                    .font(.system(size: 20.5))
-                    .foregroundStyle(Color.white)
-            }
-            .offset(y: 210)
-        }
-    }
-} //  rgba(78, 28, 220, 1)
-
-struct SecondPageView: View {  //  rgba(155, 20, 148, 1) -> rgba(190, 18, 101, 1), Sex & Dirty Questions, Lots of dirty questions for couples or good friends..., rgba(141, 18, 115, 1), blur 150
-    var body: some View {
-        ZStack{
-            Image("handKeeper")
-                .offset(y: -100)
-                .mask {
-                    Rectangle()
-                        .offset(y: -250)
-                        .blur(radius: 150)
-                        .frame(width: .infinity, height: 500)
-                }
-            VStack(spacing: 20){
-                Text("Sex & Dirty\nQuestions")
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 27))
-                    .bold()
-                    .foregroundStyle(Color.white)
-                Text("Lots of dirty questions for\ncouples or good friends...")
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 20.5))
+                    .font(.custom("inter", size: 20.5))
                     .foregroundStyle(Color.white)
             }
             .offset(y: 210)
@@ -64,7 +39,30 @@ struct SecondPageView: View {  //  rgba(155, 20, 148, 1) -> rgba(190, 18, 101, 1
     }
 }
 
-struct ThirdPageView: View {  //  , rgba(17, 129, 101, 1), Thank you for rating!, Show your love and rate us in the AppStore
+struct SecondPageView: View {
+    @AppStorage("language") private var language = ""
+    var body: some View {
+        ZStack{
+            Image("handKeeper")
+                .offset(y: -100)
+            VStack(spacing: 20){
+                Text("sexDirtyQuestions".changeLocale(lang: language))
+                    .multilineTextAlignment(.center)
+                    .font(.custom("inter", size: 26.94))
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.white)
+                Text("lotsOfDirty".changeLocale(lang: language))
+                    .multilineTextAlignment(.center)
+                    .font(.custom("inter", size: 20.5))
+                    .foregroundStyle(Color.white)
+            }
+            .offset(y: 210)
+        }
+    }
+}
+
+struct ThirdPageView: View {
+    @AppStorage("language") private var language = ""
     var body: some View {
         VStack(spacing: 20){
             Image("logo")
@@ -77,41 +75,59 @@ struct ThirdPageView: View {  //  , rgba(17, 129, 101, 1), Thank you for rating!
             VStack(spacing: -18){
                 Image(systemName: "star.fill")
                     .foregroundStyle(Color.yellow)
-                    .font(.system(size: 25))
+                    .font(.custom("inter", size: 25))
                 HStack(spacing: 40){
                     ForEach(0..<2){ _ in
                         Image(systemName: "star.fill")
                             .foregroundStyle(Color.yellow)
-                            .font(.system(size: 25))
+                            .font(.custom("inter", size: 25))
                     }
                 }
                 HStack(spacing: 100){
                     ForEach(0..<2){ _ in
                         Image(systemName: "star.fill")
                             .foregroundStyle(Color.yellow)
-                            .font(.system(size: 25))
+                            .font(.custom("inter", size: 25))
                     }
                 }
             }
             .offset(y: -5)
             
-                Text("Thank you for\nrating!")
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 27))
-                    .bold()
-                    .foregroundStyle(Color.white)
-                Text("Show your love and rate\nus in the AppStore")
-                    .multilineTextAlignment(.center)
-                    .font(.system(size: 20.5))
-                    .foregroundStyle(Color.white)
+            Text("thankYou".changeLocale(lang: language))
+                .multilineTextAlignment(.center)
+                .font(.custom("inter", size: 26.94))
+                .fontWeight(.bold)
+                .foregroundStyle(Color.white)
+            Text("showYourLove".changeLocale(lang: language))
+                .multilineTextAlignment(.center)
+                .font(.custom("inter", size: 20.5))
+                .foregroundStyle(Color.white)
         }
     }
 }
 
 struct FourthPageView: View {
-    @State private var choice = 0
+    @StateObject private var products = PurchaseManager.shared
+    @AppStorage("language") private var language = ""
+    
     var body: some View {
         VStack(spacing: 30){
+            if products.isPurchasedShow{
+                HStack{
+                    Spacer()
+                    Image(systemName: "xmark")
+                        .foregroundStyle(Color.gray.opacity(0.5))
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.5)){
+                                products.isPurchasedShow = false
+                            }
+                        }
+                }
+                .offset(y: -50)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 50)
+                .padding(.top, 40)
+            }
             Image("logo")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -119,9 +135,9 @@ struct FourthPageView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18.4))
                 .offset(y: -25)
             
-            Text("Get Full Access")
-                .font(.system(size: 27))
-                .bold()
+            Text("getFullAccess".changeLocale(lang: language))
+                .font(.custom("inter", size: 26.94))
+                .fontWeight(.bold)
                 .foregroundStyle(Color.white)
                 .offset(y: -20)
             
@@ -130,82 +146,92 @@ struct FourthPageView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(Color.white)
                     HStack(spacing: 5){
-                        Text("AI Cards")
+                        Text("AICards".changeLocale(lang: language))
                             .frame(width: 80, height: 25)
                             .background(Color.white)
                             .clipShape(RoundedRectangle(cornerRadius: 50))
-                            .font(.system(size: 16.6))
+                            .font(.custom("inter", size: 16.6))
                             .foregroundStyle(Color.black)
-                        Text("Create")
-                            .font(.system(size: 16.6))
+                        Text("create".changeLocale(lang: language))
+                            .font(.custom("inter", size: 16.6))
                             .foregroundStyle(Color.white)
                     }
                 }
                 HStack{
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(Color.white)
-                    Text("3-Day Free Trial")
-                        .font(.system(size: 16.6))
+                    Text("3-DayFreeTrial".changeLocale(lang: language))
+                        .font(.custom("inter", size: 16.6))
                         .foregroundStyle(Color.white)
                 }
                 HStack{
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(Color.white)
-                    Text("Dirty & Sex cards")
-                        .font(.system(size: 16.6))
+                    Text("dirtySexCards".changeLocale(lang: language))
+                        .font(.custom("inter", size: 16.6))
                         .foregroundStyle(Color.white)
                 }
                 HStack{
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(Color.white)
-                    Text("New content updates")
-                        .font(.system(size: 16.6))
+                    Text("newContent".changeLocale(lang: language))
+                        .font(.custom("inter", size: 16.6))
                         .foregroundStyle(Color.white)
                 }
             }
             VStack(spacing: 10) {
                 HStack(spacing: 15){
                     VStack(alignment: .leading){
-                        Text("Yearly")
+                        Text("yearly".changeLocale(lang: language))
                             .foregroundStyle(Color.white)
-                            .bold()
+                            .font(.custom("inter", size: 16))
+                            .fontWeight(.bold)
                         HStack(spacing: 5){
-                            Text("3-Day Free Trial")
+                            Text("3-DayFreeTrial".changeLocale(lang: language))
                                 .foregroundStyle(Color.white)
-                            Text("(then $90.00 /year)")
+                                .font(.custom("inter", size: 16))
+                                .fontWeight(.medium)
+                            Text("$90.00year".changeLocale(lang: language))
                                 .foregroundStyle(Color.white.opacity(0.5))
+                                .font(.custom("inter", size: 11.96))
                         }
                     }
-                    Image(systemName: choice == 0 ? "inset.filled.circle": "circle")
-                        .font(.system(size: 22))
+                    .padding(.leading, 25)
+                    Spacer()
+                    Image(systemName: products.choice == 0 ? "inset.filled.circle": "circle")
+                        .font(.custom("inter", size: 22))
                         .foregroundStyle(Color.white)
+                        .padding(.trailing, 25)
                 }
                 .frame(width: 370, height: 60)
                 .background(Color.gray.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 100))
                 .overlay {
                     RoundedRectangle(cornerRadius: 100)
-                        .stroke(Color.white, lineWidth: choice == 0 ? 1: 0)
+                        .stroke(Color.white, lineWidth: products.choice == 0 ? 1: 0)
                 }
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)){
-                        choice = 0
+                        products.choice = 0
                     }
                 }
                 HStack(spacing: 15){
                     VStack(alignment: .leading){
-                        Text("Monthly")
+                        Text("monthly".changeLocale(lang: language))
                             .foregroundStyle(Color.white)
-                            .bold()
+                            .font(.custom("inter", size: 16))
+                            .fontWeight(.bold)
                         HStack(spacing: 5){
-                            Text("$9.90 /month")
+                            Text("/month".changeLocale(lang: language))
                                 .foregroundStyle(Color.white)
+                                .font(.custom("inter", size: 16))
+                                .fontWeight(.medium)
                         }
                     }
                     .padding(.horizontal, 25)
                     Spacer()
-                    Image(systemName: choice == 1 ? "inset.filled.circle": "circle")
-                        .font(.system(size: 22))
+                    Image(systemName: products.choice == 1 ? "inset.filled.circle": "circle")
+                        .font(.custom("inter", size: 22))
                         .foregroundStyle(Color.white)
                         .padding(.horizontal, 25)
                 }
@@ -214,18 +240,63 @@ struct FourthPageView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 100))
                 .overlay {
                     RoundedRectangle(cornerRadius: 100)
-                        .stroke(Color.white, lineWidth: choice == 1 ? 1: 0)
+                        .stroke(Color.white, lineWidth: products.choice == 1 ? 1: 0)
                 }
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: 0.2)){
-                        choice = 1
+                        products.choice = 1
                     }
                 }
+            }
+            .padding(products.isPurchasedShow ? 20: 0)
+            
+            if products.isPurchasedShow{
+                Button (action: {
+                    Task{
+                        do{
+                            try await products.purchase()
+                        }catch{
+                            print(error.localizedDescription)
+                        }
+                    }
+                }){
+                    Text("continue".changeLocale(lang: language))
+                        .font(.custom("inter", size: 16))
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color.black)
+                        .frame(maxWidth: UIScreen.main.bounds.width - 100, maxHeight: 60)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 100))
+                }
+                .offset(y: -3)
+                
+                HStack {
+                    Text("Terms of Use")
+                    Spacer()
+                    Button {
+                        Task {
+                            do{
+                                try await AppStore.sync()
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    } label: {
+                        Text("Restore")
+                    }
+                    Spacer()
+                    Text("Privacy Policy")
+                }
+                .foregroundStyle(Color.gray.opacity(0.4))
+                .font(.custom("inter", size: 14.09))
+                .fontWeight(.medium)
+                .offset(y: 18)
+                .padding(.horizontal, 50)
             }
         }
     }
 }
 
 #Preview {
-    FirstPageView()
+    MainPageView()
 }

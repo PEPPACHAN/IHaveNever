@@ -19,9 +19,9 @@ final class APIService: ObservableObject {
     }
     
     func fecthAll(lang: String){
-        let url = URL(string: "https://erenerhe.fun/api/fetch/all?lang=\(lang)&userToken=1&token=25aeb740-ef45-4790-8f01-e941e008e387")
+        guard let url = URL(string: "https://erenerhe.fun/api/fetch/all?lang=\(lang)&userToken=1&token=25aeb740-ef45-4790-8f01-e941e008e387") else { print("url error"); return }
         
-        session.dataTask(with: url!) { data, response, error in
+        session.dataTask(with: url) { data, response, error in
             
             if let error {
                 print(error.localizedDescription)

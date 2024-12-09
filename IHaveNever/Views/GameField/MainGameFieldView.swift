@@ -17,6 +17,8 @@ struct MainGameFieldView: View {
     @State private var isExitButtonPressed: Bool = false
     @State private var isDone: Bool = false
     @AppStorage("language") private var language = ""
+    @AppStorage("countGames") private var isFirstGame = true
+    @State private var showRating: Bool = false
     
     var body: some View {
         ZStack{
@@ -47,10 +49,12 @@ struct MainGameFieldView: View {
                                     .padding(.bottom, 12.52)
                             }
                             Text(gameInfo.categoryName[currentPage])
-                                .font(.system(size: 24.74, weight: .heavy))
+                                .font(.custom("inter", size: 24.74))
+                                .fontWeight(.heavy)
                                 .foregroundStyle(Color.white)
                             Text(String(describing: gameInfo.gameData.count) + "cards".localizedPlural(gameInfo.gameData.count, lang: language))
-                                .font(.system(size: 15.53))
+                                .font(.custom("inter", size: 15.53))
+                                .fontWeight(.medium)
                                 .foregroundStyle(Color.white.opacity(0.37))
                         }
                         .offset(x: -13.5, y: titleOffsetY)
@@ -62,13 +66,15 @@ struct MainGameFieldView: View {
                     
                     HStack{
                         Text("IHN".changeLocale(lang: language))
-                            .font(.system(size: 34.46, weight: .heavy))
+                            .font(.custom("inter", size: 34.46))
+                            .fontWeight(.bold)
                             .foregroundStyle(Color.white)
                         
                         Spacer()
                         
                         Text(String(describing: currentPage2 + 1) + "/" + String(describing: gameInfo.gameData.count))
-                            .font(.system(size: 18.33, weight: .bold))
+                            .font(.custom("inter", size: 18.33))
+                            .fontWeight(.semibold)
                             .padding(.vertical, 9.24)
                             .padding(.horizontal, 20.05)
                             .background(Color.white.opacity(0.13))
@@ -103,13 +109,16 @@ struct MainGameFieldView: View {
                                             .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * -20)
                                             .scaleEffect(1 - CGFloat(index - currentPage) * 0.05)
                                             .animation(.easeInOut, value: currentPage)
-                                        Image("handKeeperRed")
+                                        Image(gameInfo.categoryNameEn[currentPage])
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 157.88, height: 186.73)
                                             .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * -20)
                                             .scaleEffect(1 - CGFloat(index - currentPage) * 0.05)
                                             .animation(.easeInOut, value: currentPage)
+//                                            .foregroundStyle(
+//                                                Color.init(red: 243/255, green: 243/255, blue: 243/255)
+//                                            )
                                     }
                                 }
                         }
@@ -120,9 +129,9 @@ struct MainGameFieldView: View {
                         Button(action: {
                             if currentPage > 0 {
                                 currentPage2 -= 1
-                                currentPage -= 1
                                 withAnimation(.easeInOut(duration: 0.3)){
                                     currentOffsetX = UIScreen.main.bounds.width
+                                    currentPage -= 1
                                 }
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                                     withAnimation(.easeInOut(duration: 0.5)){
@@ -159,7 +168,8 @@ struct MainGameFieldView: View {
                             exit()
                         }) {
                             Text("exitToMenu".changeLocale(lang: language))
-                                .font(.system(size: 16, weight: .heavy))
+                                .font(.custom("inter", size: 16))
+                                .fontWeight(.bold)
                                 .padding(12.72)
                         }
                         
@@ -167,11 +177,13 @@ struct MainGameFieldView: View {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 currentPage = 0
                                 currentPage2 = 0
+                                titleOffsetY = 0
                                 isDone.toggle()
                             }
                         }) {
                             Text("repeat".changeLocale(lang: language))
-                                .font(.system(size: 16, weight: .heavy))
+                                .font(.custom("inter", size: 16))
+                                .fontWeight(.bold)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 25)
                                 .background(Color.init(red: 56/255, green: 25/255, blue: 145/255))
@@ -190,6 +202,10 @@ struct MainGameFieldView: View {
                 Color.init(red: 78/255, green: 28/255, blue: 220/255)
             ], startPoint: .top, endPoint: .bottom))
         .tabViewStyle(.page(indexDisplayMode: .never))
+        
+        if showRating {
+            requestRating()
+        }
         
         if isExitButtonPressed {
             Rectangle()
@@ -248,7 +264,8 @@ extension MainGameFieldView {
                 .frame(height: 198)
             VStack{
                 Text("exit".changeLocale(lang: language))
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.custom("inter", size: 20))
+                    .fontWeight(.semibold)
                     .foregroundStyle(Color.black)
                     .multilineTextAlignment(.center)
                 HStack{
@@ -271,12 +288,32 @@ extension MainGameFieldView {
                         .background(Color.init(red: 241/255, green: 241/255, blue: 241/255))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .onTapGesture {
-                            isExitButtonPressed.toggle()
-                            exit()
+                            if !isFirstGame{
+                                isExitButtonPressed.toggle()
+                                exit()
+                            } else {
+                                showRating = true
+                                isExitButtonPressed.toggle()
+                            }
                         }
                 }
                 .padding(5)
             }
+        }
+    }
+    
+    func requestRating() -> some View {
+        ZStack{
+            Rectangle()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(Color.black.opacity(0.4))
+                .ignoresSafeArea(.all)
+                .onTapGesture {
+                    isFirstGame = false
+                    showRating = false
+                    exit()
+                }
+            RequestReviewView(showRating: $showRating, isExitButtonPressed: $isExitButtonPressed)
         }
     }
 }

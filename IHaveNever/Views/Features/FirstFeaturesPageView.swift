@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct FirstFeaturesPageView: View {
     @AppStorage("wasShown") var wasShown: Bool = false
+    @AppStorage("language") private var language = ""
     
     @State private var currentPage = 0
     private let colors = [
@@ -17,6 +19,8 @@ struct FirstFeaturesPageView: View {
         LinearGradient(colors: [Color.init(red: 15/255, green: 118/255, blue: 89/255), Color.init(red: 28/255, green: 220/255, blue: 201/255), Color.init(red: 15/255, green: 118/255, blue: 89/255)], startPoint: .top, endPoint: .bottom),
         LinearGradient(colors: [Color.init(red: 42/255, green: 15/255, blue: 118/255), Color.init(red: 78/255, green: 28/255, blue: 220/255), Color.init(red: 42/255, green: 15/255, blue: 118/255)], startPoint: .top, endPoint: .bottom)
     ]
+    
+    @StateObject private var products = PurchaseManager.shared
     
     var body: some View {
         VStack{
@@ -58,9 +62,19 @@ struct FirstFeaturesPageView: View {
                     withAnimation(.easeInOut(duration: 0.5)){
                         currentPage+=1
                     }
+                } else {
+                    Task{
+                        do{
+                            try await products.purchase()
+                        }catch{
+                            print(error.localizedDescription)
+                        }
+                    }
                 }
             }){
-                Text("Continue")
+                Text("continue".changeLocale(lang: language))
+                    .font(.custom("inter", size: 16))
+                    .fontWeight(.bold)
                     .foregroundStyle(Color.black)
                     .frame(maxWidth: UIScreen.main.bounds.width - 100, maxHeight: 60)
                     .background(Color.white)
@@ -70,20 +84,31 @@ struct FirstFeaturesPageView: View {
             HStack {
                 Text("Terms of Use")
                 Spacer()
-                Text("Restore")
+                Button {
+                    Task {
+                        do{
+                            try await AppStore.sync()
+                        } catch {
+                            print(error)
+                        }
+                    }
+                } label: {
+                    Text("Restore")
+                }
                 Spacer()
                 Text("Privacy Policy")
             }
             .disabled(currentPage != 3)
             .foregroundStyle(currentPage == 3 ? Color.gray.opacity(0.4): Color.clear)
-            .font(.system(size: 14))
+            .font(.custom("inter", size: 14.09))
+            .fontWeight(.medium)
             .padding(.horizontal, 50)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(colors[currentPage].ignoresSafeArea())
     }
 }
-//
-//#Preview {
-//    FirstFeaturesPageView()
-//}
+
+#Preview {
+    FirstFeaturesPageView()
+}

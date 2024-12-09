@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AIModeView: View {
+    @Environment(\.requestReview) var requestReview
+    
     @State private var modeName: String = ""
     @State private var selectedMode = ""
     @StateObject private var mode = APIService.shared
@@ -16,6 +18,7 @@ struct AIModeView: View {
     @State private var numberOfCards: String = ""
     @State private var tags: String = ""
     @AppStorage("language") private var language = ""
+    @AppStorage("isFirstAiGame") private var isFirstAiGame: Bool = true
     
     var body: some View {
         Group {
@@ -27,11 +30,14 @@ struct AIModeView: View {
                             Color.init(red: 78/255, green: 28/255, blue: 220/255)
                         ], startPoint: .top, endPoint: .bottom)
                     )
-                    .font(.system(size: 18.43, weight: .heavy))
+                    .font(.custom("inter", size: 18.43))
+                    .fontWeight(.heavy)
                     .padding()
                 
                 if !isLoading {
                     TextField("modeName".changeLocale(lang: language), text: $modeName)
+                        .font(.custom("inter", size: 16))
+                        .fontWeight(.medium)
                         .padding()
                         .background(Color.init(.tertiarySystemFill))
                         .foregroundStyle(Color.black)
@@ -49,6 +55,8 @@ struct AIModeView: View {
                         HStack{
                             if !mode.modes.isEmpty {
                                 Text(selectedMode == "" ? "selectMode".changeLocale(lang: language): selectedMode)
+                                    .font(.custom("inter", size: 16))
+                                    .fontWeight(.medium)
                                     .foregroundStyle(
                                         LinearGradient(colors: [
                                             Color.init(red: 42/255, green: 15/255, blue: 118/255),
@@ -81,6 +89,8 @@ struct AIModeView: View {
                     
                     if !isSelection {
                         TextField("numberOfCards".changeLocale(lang: language), text: $numberOfCards)
+                            .font(.custom("inter", size: 16))
+                            .fontWeight(.medium)
                             .keyboardType(.numberPad)
                             .foregroundStyle(.black)
                             .padding()
@@ -92,6 +102,8 @@ struct AIModeView: View {
                         ZStack(alignment: .topLeading){
                             if tags.isEmpty{
                                 Text("briefTagsForTheGist".changeLocale(lang: language))
+                                    .font(.custom("inter", size: 16))
+                                    .fontWeight(.medium)
                                     .foregroundStyle(.black.opacity(0.3))
                                     .padding(.top, 26)
                                     .padding(.horizontal, 35)
@@ -110,12 +122,17 @@ struct AIModeView: View {
                     if (modeName != "" && selectedMode != "" && numberOfCards != "" && tags != ""){
                         withAnimation(.easeInOut(duration: 0.3)){
                             self.isLoading.toggle()
+                            if isFirstAiGame {
+                                requestReview()
+                                isFirstAiGame = false
+                            }
                         }
                     }
                 }){
                     Text("generate".changeLocale(lang: language))
                         .foregroundStyle(.white)
-                        .font(.system(size: 16.33, weight: .bold))
+                        .font(.custom("inter", size: 16.33))
+                        .fontWeight(.bold)
                         .frame(maxWidth: .infinity, maxHeight: 65.13)
                         .background(Color.init(red: 56/255, green: 25/255, blue: 145/255))
                         .clipShape(RoundedRectangle(cornerRadius: 23))
