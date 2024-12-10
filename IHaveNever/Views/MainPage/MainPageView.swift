@@ -137,7 +137,6 @@ struct MainPageView: View {
             
             if gameInfo.isGameStarted {
                 MainGameFieldView()
-                    .padding(.bottom, hasRoundedCorners() ? 0: 20)
             }
             
             if products.isPurchasedShow {

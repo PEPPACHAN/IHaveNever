@@ -31,7 +31,7 @@ struct MainGameFieldView: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 27))
                             .foregroundStyle(Color.white)
-                            .offset(y: isDone ? -235: 0)
+                            .offset(y: isDone ? hasRoundedCorners() ? -235: -190: 0)
                             .onTapGesture {
                                 isExitButtonPressed.toggle()
                             }
@@ -148,17 +148,17 @@ struct MainGameFieldView: View {
                             }
                         }) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: hasRoundedCorners() ? 55.38 : 40))
-                                .padding(12.72)
+                                .font(.system(size: hasRoundedCorners() ? 55.38: 30))
                         }
+                        .padding(12.72)
                         .padding(10)
-                        .foregroundStyle(currentPage != 0 ? Color.white : Color.clear)
-                        .background(currentPage != 0 ? Color.gray.opacity(0.5) : Color.clear)
+                        .foregroundStyle(currentPage2 != 0 ? Color.white : Color.clear)
+                        .background(currentPage2 != 0 ? Color.gray.opacity(0.5) : Color.clear)
                         .clipShape(Circle())
-                        .disabled(currentPage == 0)
+                        .disabled(currentPage2 == 0)
                         
                         Image(systemName: (currentPage2+1) == gameInfo.gameData.count ? "checkmark" :"chevron.right")
-                            .font(.system(size: (currentPage+1) == gameInfo.gameData.count ? hasRoundedCorners() ? 55.38: 40: hasRoundedCorners() ? 40: 30))
+                            .font(.system(size: hasRoundedCorners() ? 55.38: 30))
                             .padding(12.72)
                             .padding(10)
                             .foregroundStyle(Color.white)
@@ -198,6 +198,7 @@ struct MainGameFieldView: View {
                                 .padding(.horizontal, 29)
                         }
                     }
+                    .offset(y: hasRoundedCorners() ? 0: -20)
                     .foregroundStyle(.white)
                 }
             }
