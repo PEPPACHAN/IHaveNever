@@ -141,6 +141,12 @@ struct AIModeView: View {
             }
             .padding()
         }
+        .onAppear{
+            GameInfo.shared.selectedIndex = []
+            GameInfo.shared.gameData = []
+            GameInfo.shared.categoryName = []
+            GameInfo.shared.categoryNameEn = []
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)
         .colorScheme(.light)
