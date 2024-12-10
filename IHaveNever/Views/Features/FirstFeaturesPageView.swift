@@ -11,6 +11,7 @@ import StoreKit
 struct FirstFeaturesPageView: View {
     @AppStorage("wasShown") var wasShown: Bool = false
     @AppStorage("language") private var language = ""
+    private let screen = UIScreen.main.bounds
     
     @State private var currentPage = 0
     private let colors = [
@@ -76,11 +77,12 @@ struct FirstFeaturesPageView: View {
                     .font(.custom("inter", size: 16))
                     .fontWeight(.bold)
                     .foregroundStyle(Color.black)
-                    .frame(maxWidth: UIScreen.main.bounds.width - 100, maxHeight: 60)
+                    .frame(maxWidth: UIScreen.main.bounds.width - 100, maxHeight: screen.height/14.2)
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 100))
             }
-            .offset(y: -28)
+            .offset(y: hasRoundedCorners() ? -28: 0)
+            
             HStack {
                 Text("Terms of Use")
                 Spacer()

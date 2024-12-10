@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 import StoreKit
 
 final class GameInfo: ObservableObject {
@@ -135,4 +136,14 @@ final class PurchaseManager: ObservableObject {
             print("Failed to process transaction \(transaction.id): \(error)")
         }
     }
+}
+
+func hasRoundedCorners() -> Bool {
+    let keyWindow = UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .first { $0.isKeyWindow }
+    
+    let safeAreaInsets = keyWindow?.safeAreaInsets ?? .zero
+    return safeAreaInsets.top > 20 || safeAreaInsets.bottom > 0
 }

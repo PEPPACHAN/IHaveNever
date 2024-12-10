@@ -19,6 +19,9 @@ struct MainGameFieldView: View {
     @AppStorage("language") private var language = ""
     @AppStorage("countGames") private var isFirstGame = true
     @State private var showRating: Bool = false
+    @State private var textOffsetY: CGFloat = 0
+    
+    private let screen = UIScreen.main.bounds
     
     var body: some View {
         ZStack{
@@ -101,16 +104,16 @@ struct MainGameFieldView: View {
                                 .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * -20)
                                 .scaleEffect(1 - CGFloat(index - currentPage) * 0.05)
                                 .animation(.easeInOut, value: currentPage)
-                                .frame(width: 337, height: 447)
+                                .frame(width: screen.width/1.16, height: screen.height/1.9)
                                 .overlay {
                                     VStack(spacing: 71.21) {
                                         Text(gameInfo.gameData[index].appCardTextValue.capitalizeFirstLetter())
                                             .font(.custom("inter", size: 24.66))
                                             .fontWeight(.bold)
-                                            .frame(maxHeight: 150)
-                                            .minimumScaleFactor(0.3)
+                                            .frame(maxWidth: screen.width/1.52, maxHeight: screen.height/8.11)
+                                            .minimumScaleFactor(0.5)
                                             .padding(.horizontal)
-                                            .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * -20)
+                                            .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * textOffsetY)
                                             .scaleEffect(1 - CGFloat(index - currentPage) * 0.05)
                                             .animation(.easeInOut, value: currentPage)
                                         Image(gameInfo.categoryNameEn[currentPage])
@@ -145,7 +148,7 @@ struct MainGameFieldView: View {
                             }
                         }) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 55.38))
+                                .font(.system(size: hasRoundedCorners() ? 55.38 : 40))
                                 .padding(12.72)
                         }
                         .padding(10)
@@ -155,7 +158,7 @@ struct MainGameFieldView: View {
                         .disabled(currentPage == 0)
                         
                         Image(systemName: (currentPage2+1) == gameInfo.gameData.count ? "checkmark" :"chevron.right")
-                            .font(.system(size: (currentPage+1) == gameInfo.gameData.count ? 40 : 55.38))
+                            .font(.system(size: (currentPage+1) == gameInfo.gameData.count ? hasRoundedCorners() ? 55.38: 40: hasRoundedCorners() ? 40: 30))
                             .padding(12.72)
                             .padding(10)
                             .foregroundStyle(Color.white)
@@ -197,6 +200,13 @@ struct MainGameFieldView: View {
                     }
                     .foregroundStyle(.white)
                 }
+            }
+        }
+        .onAppear{
+            if hasRoundedCorners(){
+                textOffsetY = -20
+            } else {
+                textOffsetY = 0
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

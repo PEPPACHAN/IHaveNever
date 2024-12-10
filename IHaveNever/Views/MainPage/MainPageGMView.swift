@@ -66,11 +66,11 @@ struct MainPageGMView: View {
                     platesSort(sort: false)
                 }
             }
-            .padding(.bottom, !gameInfo.selectedIndex.isEmpty ? screen.height/10.5 : 0)
+            .padding(.bottom, !gameInfo.selectedIndex.isEmpty ? screen.height/9 : 0)
         }
         .scrollIndicators(.hidden)
-        .padding()
-        .padding(.bottom)
+        .padding([.top, .leading, .trailing])
+        .padding(.bottom, hasRoundedCorners() ? 16: 5)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)
     }

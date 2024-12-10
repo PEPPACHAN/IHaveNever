@@ -10,6 +10,7 @@ import StoreKit
 
 struct FirstPageView: View {
     @AppStorage("language") private var language = ""
+    private let screen = UIScreen.main.bounds
     var body: some View {
         ZStack{
             VStack{
@@ -23,29 +24,34 @@ struct FirstPageView: View {
                     .blur(radius: 50)
                     .frame(width: 1000, height: 700)
             })
-            VStack(spacing: 20){
+            VStack(spacing: hasRoundedCorners() ? 20: 7){
                 Text("1MQuestions".changeLocale(lang: language))
                     .multilineTextAlignment(.center)
                     .font(.custom("inter", size: 26.94))
                     .fontWeight(.bold)
+                    .frame(maxWidth: screen.width/1.72, maxHeight: screen.height/12.9)
+                    .minimumScaleFactor(0.7)
                     .foregroundStyle(Color.white)
                 Text("haveFun".changeLocale(lang: language))
                     .multilineTextAlignment(.center)
                     .font(.custom("inter", size: 20.5))
+                    .frame(maxWidth: screen.width/1.57, maxHeight: screen.height/17.04)
+                    .minimumScaleFactor(0.7)
                     .foregroundStyle(Color.white)
             }
-            .offset(y: 210)
+            .offset(y: hasRoundedCorners() ? 210: 190)
         }
     }
 }
 
 struct SecondPageView: View {
     @AppStorage("language") private var language = ""
+    private let screen = UIScreen.main.bounds
     var body: some View {
         ZStack{
             Image("handKeeper")
                 .offset(y: -100)
-            VStack(spacing: 20){
+            VStack(spacing: hasRoundedCorners() ? 20: 7){
                 Text("sexDirtyQuestions".changeLocale(lang: language))
                     .multilineTextAlignment(.center)
                     .font(.custom("inter", size: 26.94))
@@ -54,9 +60,10 @@ struct SecondPageView: View {
                 Text("lotsOfDirty".changeLocale(lang: language))
                     .multilineTextAlignment(.center)
                     .font(.custom("inter", size: 20.5))
+                    .minimumScaleFactor(0.7)
                     .foregroundStyle(Color.white)
             }
-            .offset(y: 210)
+            .offset(y: hasRoundedCorners() ? 210: 180)
         }
     }
 }
@@ -123,7 +130,7 @@ struct FourthPageView: View {
                             }
                         }
                 }
-                .offset(y: -50)
+                .offset(y: hasRoundedCorners() ? -50: 20)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 50)
                 .padding(.top, 40)
@@ -133,13 +140,13 @@ struct FourthPageView: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 78.5, height: 78.5)
                 .clipShape(RoundedRectangle(cornerRadius: 18.4))
-                .offset(y: -25)
+                .offset(y: hasRoundedCorners() ? -25: 0)
             
             Text("getFullAccess".changeLocale(lang: language))
                 .font(.custom("inter", size: 26.94))
                 .fontWeight(.bold)
                 .foregroundStyle(Color.white)
-                .offset(y: -20)
+                .offset(y: hasRoundedCorners() ? -20: -10)
             
             VStack(alignment: .leading, spacing: 20){
                 HStack{
@@ -179,6 +186,8 @@ struct FourthPageView: View {
                         .foregroundStyle(Color.white)
                 }
             }
+            .offset(y: hasRoundedCorners() ? 0: -10)
+            
             VStack(spacing: 10) {
                 HStack(spacing: 15){
                     VStack(alignment: .leading){
@@ -198,7 +207,7 @@ struct FourthPageView: View {
                     }
                     .padding(.leading, 25)
                     Spacer()
-                    Image(systemName: products.choice == 0 ? "inset.filled.circle": "circle")
+                    Image(systemName: products.choice == 0 ? "checkmark.circle.fill": "circle")
                         .font(.custom("inter", size: 22))
                         .foregroundStyle(Color.white)
                         .padding(.trailing, 25)
@@ -230,7 +239,7 @@ struct FourthPageView: View {
                     }
                     .padding(.horizontal, 25)
                     Spacer()
-                    Image(systemName: products.choice == 1 ? "inset.filled.circle": "circle")
+                    Image(systemName: products.choice == 1 ? "checkmark.circle.fill": "circle")
                         .font(.custom("inter", size: 22))
                         .foregroundStyle(Color.white)
                         .padding(.horizontal, 25)
@@ -249,54 +258,59 @@ struct FourthPageView: View {
                 }
             }
             .padding(products.isPurchasedShow ? 20: 0)
+            .offset(y: hasRoundedCorners() ? 0: -10)
             
             if products.isPurchasedShow{
-                Button (action: {
-                    Task{
-                        do{
-                            try await products.purchase()
-                        }catch{
-                            print(error.localizedDescription)
-                        }
-                    }
-                }){
-                    Text("continue".changeLocale(lang: language))
-                        .font(.custom("inter", size: 16))
-                        .fontWeight(.bold)
-                        .foregroundStyle(Color.black)
-                        .frame(maxWidth: UIScreen.main.bounds.width - 100, maxHeight: 60)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 100))
-                }
-                .offset(y: -3)
-                
-                HStack {
-                    Text("Terms of Use")
-                    Spacer()
-                    Button {
-                        Task {
+                VStack{
+                    Button (action: {
+                        Task{
                             do{
-                                try await AppStore.sync()
-                            } catch {
-                                print(error)
+                                try await products.purchase()
+                            }catch{
+                                print(error.localizedDescription)
                             }
                         }
-                    } label: {
-                        Text("Restore")
+                    }){
+                        Text("continue".changeLocale(lang: language))
+                            .font(.custom("inter", size: 16))
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.black)
+                            .frame(maxWidth: UIScreen.main.bounds.width - 100)
+                            .frame(height: 60)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 100))
                     }
-                    Spacer()
-                    Text("Privacy Policy")
+                    .offset(y: -3)
+                    
+                    HStack {
+                        Text("Terms of Use")
+                        Spacer()
+                        Button {
+                            Task {
+                                do{
+                                    try await AppStore.sync()
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        } label: {
+                            Text("Restore")
+                        }
+                        Spacer()
+                        Text("Privacy Policy")
+                    }
+                    .foregroundStyle(Color.gray.opacity(0.4))
+                    .font(.custom("inter", size: 14.09))
+                    .fontWeight(.medium)
+                    .offset(y: 18)
+                    .padding(.horizontal, 50)
                 }
-                .foregroundStyle(Color.gray.opacity(0.4))
-                .font(.custom("inter", size: 14.09))
-                .fontWeight(.medium)
-                .offset(y: 18)
-                .padding(.horizontal, 50)
+                .padding(.bottom)
             }
         }
     }
 }
 
 #Preview {
-    MainPageView()
+    FirstFeaturesPageView()
 }

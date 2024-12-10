@@ -19,6 +19,8 @@ struct MainPageView: View {
     @State private var selectedInfo: Int?
     @AppStorage("language") private var language = ""
     
+    private let screen = UIScreen.main.bounds
+    
     var body: some View {
         ZStack{
             VStack{
@@ -87,16 +89,16 @@ struct MainPageView: View {
                 if !apiData.modes.isEmpty {
                     if !selectedTab {
                         MainPageGMView(selectedInfo: $selectedInfo)
-                            .clipShape(RoundedRectangle(cornerRadius: 38))
+                            .clipShape(RoundedCornersShape(corners: [.topLeft, .topRight], radius: 38))
                     } else {
                         AIModeView()
-                            .clipShape(RoundedRectangle(cornerRadius: 38))
+                            .clipShape(RoundedCornersShape(corners: [.topLeft, .topRight], radius: 38))
                     }
                 } else {
                     LoadingView(color: Color.init(red: 42/255, green: 15/255, blue: 118/255), size: 70)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 38))
+                        .clipShape(RoundedCornersShape(corners: [.topLeft, .topRight], radius: 38))
                 }
             }
             .ignoresSafeArea()
@@ -135,6 +137,7 @@ struct MainPageView: View {
             
             if gameInfo.isGameStarted {
                 MainGameFieldView()
+                    .padding(.bottom, hasRoundedCorners() ? 0: 20)
             }
             
             if products.isPurchasedShow {
@@ -264,6 +267,20 @@ extension MainPageView {
                     retryTimer?.invalidate()
                 }
             }
+        }
+    }
+    
+    struct RoundedCornersShape: Shape {
+        var corners: UIRectCorner
+        var radius: CGFloat
+
+        func path(in rect: CGRect) -> Path {
+            let path = UIBezierPath(
+                roundedRect: rect,
+                byRoundingCorners: corners,
+                cornerRadii: CGSize(width: radius, height: radius)
+            )
+            return Path(path.cgPath)
         }
     }
 }
