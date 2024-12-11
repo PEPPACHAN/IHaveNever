@@ -116,7 +116,7 @@ struct MainGameFieldView: View {
                                             .offset(x: index==currentPage ? currentOffsetX: CGFloat(index - currentPage), y: CGFloat(index - currentPage) * textOffsetY)
                                             .scaleEffect(1 - CGFloat(index - currentPage) * 0.05)
                                             .animation(.easeInOut, value: currentPage)
-                                        Image(gameInfo.categoryNameEn[currentPage])
+                                        Image(uiImage: UIImage(named: gameInfo.categoryNameEn[currentPage]) ?? UIImage(named: "MyPack")!)
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .frame(width: 157.88, height: 186.73)

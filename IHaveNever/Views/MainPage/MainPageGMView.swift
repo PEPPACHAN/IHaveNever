@@ -98,7 +98,8 @@ extension MainPageGMView {
     
     func platesView(item: AppData, index: Int) -> some View {
         HStack{
-            Image(item.appCategoryTitleEnValue)
+//            Image(item.appCategoryTitleEnValue)
+            Image(uiImage: UIImage(named: item.appCategoryTitleEnValue) ?? UIImage(named: "MyPack")!)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 59.58, height: 56.62)
@@ -107,6 +108,8 @@ extension MainPageGMView {
                 .padding(.trailing, 23.78)
             VStack(alignment: .leading){
                 Text(String(describing: item.appCategoryTitleValue))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                     .foregroundStyle(Color.white)
                     .font(.custom("inter", size: 19.57))
                     .fontWeight(.heavy)
